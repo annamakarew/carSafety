@@ -26,14 +26,12 @@ car_models = {
     'ford': [
         'escape-4-door-suv',
         'explorer-4-door-suv',
-        'edge-4-door-suv',
-        'expedition-4-door-suv'
+        'edge-4-door-suv'
     ],
     'chevrolet': [
         'equinox-4-door-suv',
         'traverse-4-door-suv',
-        'blazer-4-door-suv',
-        'suburban-4-door-suv'
+        'blazer-4-door-suv'
     ],
     'nissan': [
         'rogue-4-door-suv',
@@ -69,24 +67,18 @@ car_models = {
         'q8-4-door-suv'
     ],
     'mercedes-benz': [
-        'glc-4-door-suv',
-        'gle-4-door-suv',
-        'gls-4-door-suv',
-        'gla-4-door-suv'
+        'glc-4-door-suv'
     ],
     'lexus': [
         'nx-4-door-suv',
         'rx-4-door-suv',
-        'lx-4-door-suv',
         'ux-4-door-suv'
     ],
     'volkswagen': [
         'tiguan-4-door-suv',
-        'atlas-4-door-suv',
-        'id4-4-door-suv'
+        'atlas-4-door-suv'
     ],
     'buick': [
-        'envision-4-door-suv',
         'encore-4-door-suv',
         'enclave-4-door-suv'
     ],
@@ -108,42 +100,33 @@ def construct_url(make, model, year):
 
 
 # Function to scrape a single car page
-def scrape_car_page(url, max_retries=3, delay=5):
-    retries = 0
-    while retries < max_retries:
-        try:
-            response = requests.get(url)
-            # print(response.headers)
-            response.raise_for_status()
-            soup = BeautifulSoup(response.content, 'html.parser')
-            ratings_div = soup.find('div', class_='ratings-overview')
-            # Check if the div was found
-            if not ratings_div:
-                return {}
-            # Dictionary to hold the ratings
-            ratings = {}
-            # Find all rating rows
-            rating_rows = ratings_div.find_all('tr')
-            for row in rating_rows:
-                # Extract rating name and value
-                if row.find('th', scope='row'):
-                    rating_name = row.find('th', scope='row').text.strip()
-                    rating_value = row.find('div', class_='rating-icon-block').text.strip()
-                    # Add to ratings dictionary
-                    ratings[rating_name] = rating_value
-            return ratings
-        except requests.exceptions.RequestException as e:
-            print(e)
-            retries += 1
-            print(f"Attempt {retries} failed: {e}")
-            if retries < max_retries:
-                print(f"Retrying in {delay} seconds...")
-                time.sleep(delay)
-            else:
-                print(f"Max retries reached for {url}. Skipping...")
-                return {}
-
-
+def scrape_car_page(url, delay=6):
+    # Although delay slows down program, it is necessary to avoid being rate limited.
+    time.sleep(delay)
+    try:
+        response = requests.get(url)
+        print(response.headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'html.parser')
+        ratings_div = soup.find('div', class_='ratings-overview')
+        # Check if the div was found
+        if not ratings_div:
+            return {}
+        # Dictionary to hold the ratings
+        ratings = {}
+        # Find all rating rows
+        rating_rows = ratings_div.find_all('tr')
+        for row in rating_rows:
+            # Extract rating name and value
+            if row.find('th', scope='row'):
+                rating_name = row.find('th', scope='row').text.strip()
+                rating_value = row.find('div', class_='rating-icon-block').text.strip()
+                # Add to ratings dictionary
+                ratings[rating_name] = rating_value
+        return ratings
+    except requests.exceptions.RequestException as e:
+        print(e)
+        return {}
 
 # Lists to hold the data
 car_data = []
