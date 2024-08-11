@@ -85,8 +85,7 @@ car_models = {
     'cadillac': [
         'xt4-4-door-suv',
         'xt5-4-door-suv',
-        'xt6-4-door-suv',
-        'escalade-4-door-suv'
+        'xt6-4-door-suv'
     ]
 }
 
@@ -100,7 +99,7 @@ def construct_url(make, model, year):
 
 
 # Function to scrape a single car page
-def scrape_car_page(url, delay=6):
+def scrape_car_page(url, delay=9):
     # Although delay slows down program, it is necessary to avoid being rate limited.
     time.sleep(delay)
     try:
